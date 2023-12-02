@@ -1,5 +1,7 @@
 package finder
 
+import "fmt"
+
 type Find struct {
 	flags
 }
@@ -13,7 +15,7 @@ func (f *Find) parsingFlags() {
 }
 
 func (f *Find) Do() {
-
+	fmt.Println("used find util")
 }
 
 func New() *Find {

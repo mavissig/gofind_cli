@@ -13,31 +13,61 @@ type utils struct {
 	CountFlags map[string]bool
 }
 
-type FindUC interface {
+type Find interface {
 	Find()
 }
 
 type Cli struct {
 	utils
-	fuc FindUC
+	find Find
 }
 
 func (c *Cli) Run() {
-	c.parsingFlagsUFind()
-	c.parsingFlagsUCount()
-	c.validation()
+	c.Utils = make(map[string]bool)
+
+	c.parsingFlags()
+	c.validationFlagsUFind()
+	c.validationFlagsUCount()
+	c.validationCollision()
+
+	if c.UFind {
+		c.find.Find()
+	}
 }
 
-func (c *Cli) parsingFlagsUFind() {
-	c.FindFlags["sl"] = *flag.Bool("sl", false, "")
-	c.FindFlags["d"] = *flag.Bool("d", false, "")
-	c.FindFlags["f"] = *flag.Bool("f", false, "")
+func (c *Cli) parsingFlags() {
+	sl := flag.Bool("sl", false, "")
+	d := flag.Bool("d", false, "")
+	f := flag.Bool("f", false, "")
+	ext := flag.Bool("ext", false, "")
+
+	l := flag.Bool("l", false, "")
+	m := flag.Bool("m", false, "")
+	v := flag.Bool("v", false, "")
+
 	flag.Parse()
 
+	c.FindFlags = make(map[string]bool)
+	c.FindFlags["sl"] = *sl
+	c.FindFlags["d"] = *d
+	c.FindFlags["f"] = *f
+	c.FindFlags["ext"] = *ext
+
+	c.CountFlags = make(map[string]bool)
+	c.CountFlags["l"] = *l
+	c.CountFlags["m"] = *m
+	c.CountFlags["v"] = *v
+}
+
+func (c *Cli) validationFlagsUFind() {
 	for _, val := range c.FindFlags {
 		if val {
 			c.UFind = true
 		}
+	}
+
+	if c.FindFlags["ext"] && !c.FindFlags["f"] {
+		log.Fatalln("[ERROR]: it is not possible to use the -ext flag without the -f flag")
 	}
 
 	if c.UFind {
@@ -45,11 +75,7 @@ func (c *Cli) parsingFlagsUFind() {
 	}
 }
 
-func (c *Cli) parsingFlagsUCount() {
-	c.CountFlags["l"] = *flag.Bool("l", false, "")
-	c.CountFlags["m"] = *flag.Bool("m", false, "")
-	c.CountFlags["v"] = *flag.Bool("v", false, "")
-	flag.Parse()
+func (c *Cli) validationFlagsUCount() {
 
 	for _, val := range c.CountFlags {
 		if val && !c.UCount {
@@ -59,12 +85,12 @@ func (c *Cli) parsingFlagsUCount() {
 		}
 	}
 
-	if c.UFind {
+	if c.UCount {
 		c.Utils["UCount"] = true
 	}
 }
 
-func (c *Cli) validation() {
+func (c *Cli) validationCollision() {
 	check := false
 	for _, val := range c.Utils {
 		if val && check {
@@ -77,8 +103,8 @@ func (c *Cli) validation() {
 	}
 }
 
-func New(fuc FindUC) *Cli {
+func New(fuc Find) *Cli {
 	return &Cli{
-		fuc: fuc,
+		find: fuc,
 	}
 }
