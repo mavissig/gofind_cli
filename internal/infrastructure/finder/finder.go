@@ -34,6 +34,21 @@ func (f *Find) parsingArgs(args []string) {
 	}
 }
 
+func IsSymlink(path string) (bool, string) {
+	fileInfo, err := os.Lstat(path)
+	if err != nil {
+		return false, ""
+	}
+	if fileInfo.Mode()&os.ModeSymlink != 0 {
+		linc, err := os.Readlink(path)
+		if err != nil {
+			return false, ""
+		}
+		return true, linc
+	}
+	return false, ""
+}
+
 func (f *Find) output(templatePath string) {
 	prefix := templatePath + "/"
 	files, err := os.ReadDir(templatePath)
@@ -41,18 +56,47 @@ func (f *Find) output(templatePath string) {
 		log.Println(err)
 		return
 	}
+
+	tmpPath := ""
+	if templatePath != "." {
+		tmpPath = templatePath
+	}
+
 	for _, file := range files {
-		if f.f && !file.IsDir() && !f.ext {
-			fmt.Println(prefix + file.Name())
+
+		if f.f && !file.IsDir() {
+
+			if f.ext && path.Ext(file.Name()) == f.templateExt {
+				fmt.Println(prefix + file.Name())
+				continue
+			}
+			if !f.ext {
+				check, pathLink := IsSymlink(tmpPath + file.Name())
+				if check {
+					fmt.Printf("%s -> %s\n", file.Name(), pathLink)
+					continue
+				}
+				fmt.Println(prefix + file.Name())
+			}
 		}
-		if f.f && !file.IsDir() && f.ext && path.Ext(file.Name()) == f.templateExt {
-			fmt.Println(prefix + file.Name())
-		}
+		//} else if f.f && !file.IsDir() && f.ext && path.Ext(file.Name()) == f.templateExt {
+		//	fmt.Println(prefix + file.Name())
+		//}
+
 		if f.d && file.IsDir() {
 			fmt.Println(prefix + file.Name())
 		}
+
 		if file.IsDir() {
 			f.output(prefix + file.Name())
+		}
+
+		if f.sl && !f.f {
+			check, pathLink := IsSymlink(tmpPath + file.Name())
+			if check {
+				fmt.Printf("%s -> %s\n", file.Name(), pathLink)
+				continue
+			}
 		}
 	}
 }

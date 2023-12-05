@@ -8,6 +8,7 @@ import (
 type utils struct {
 	UFind      bool
 	UCount     bool
+	UDefault   bool
 	Utils      map[string]bool
 	FindFlags  map[string]bool
 	CountFlags map[string]bool
@@ -33,6 +34,12 @@ func (c *Cli) Run() {
 	args := flag.Args()
 
 	if c.UFind {
+		c.find.Find(c.FindFlags, args)
+	} else if c.UDefault {
+		c.FindFlags["sl"] = true
+		//c.FindFlags["d"] = true
+		c.FindFlags["f"] = true
+
 		c.find.Find(c.FindFlags, args)
 	}
 }
@@ -73,6 +80,7 @@ func (c *Cli) validationFlagsUFind() {
 	}
 
 	if c.UFind {
+		c.UDefault = false
 		c.Utils["UFind"] = true
 	}
 }
@@ -88,6 +96,7 @@ func (c *Cli) validationFlagsUCount() {
 	}
 
 	if c.UCount {
+		c.UDefault = false
 		c.Utils["UCount"] = true
 	}
 }
@@ -107,6 +116,7 @@ func (c *Cli) validationCollision() {
 
 func New(fuc Find) *Cli {
 	return &Cli{
-		find: fuc,
+		find:  fuc,
+		utils: utils{UDefault: true},
 	}
 }
