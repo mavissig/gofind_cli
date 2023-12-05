@@ -14,7 +14,7 @@ type utils struct {
 }
 
 type Find interface {
-	Find()
+	Find(map[string]bool, []string)
 }
 
 type Cli struct {
@@ -30,8 +30,10 @@ func (c *Cli) Run() {
 	c.validationFlagsUCount()
 	c.validationCollision()
 
+	args := flag.Args()
+
 	if c.UFind {
-		c.find.Find()
+		c.find.Find(c.FindFlags, args)
 	}
 }
 
