@@ -37,7 +37,7 @@ func (c *Cli) Run() {
 		c.find.Find(c.FindFlags, args)
 	} else if c.UDefault {
 		c.FindFlags["sl"] = true
-		//c.FindFlags["d"] = true
+		c.FindFlags["d"] = true
 		c.FindFlags["f"] = true
 
 		c.find.Find(c.FindFlags, args)

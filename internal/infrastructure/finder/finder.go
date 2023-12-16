@@ -7,6 +7,7 @@ import (
 	"path"
 )
 
+// Find - returns a list of files and directories in a given directory
 type Find struct {
 	flags
 }
