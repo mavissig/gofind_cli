@@ -48,6 +48,10 @@ func (f *Find) output(templatePath string) {
 		tmpPath = templatePath
 	}
 
+	if f.d {
+		fmt.Println(templatePath)
+	}
+
 	for _, file := range files {
 
 		if f.f && !file.IsDir() {
@@ -57,17 +61,13 @@ func (f *Find) output(templatePath string) {
 				continue
 			}
 			if !f.ext {
-				check, pathLink := isSymlink(tmpPath + file.Name())
+				check, pathLink := isSymlink(prefix + file.Name())
 				if check {
-					fmt.Printf("%s -> %s\n", file.Name(), pathLink)
+					fmt.Printf("%s -> %s\n", prefix+file.Name(), pathLink)
 					continue
 				}
 				fmt.Println(prefix + file.Name())
 			}
-		}
-
-		if f.d && file.IsDir() {
-			fmt.Println(prefix + file.Name())
 		}
 
 		if file.IsDir() {
