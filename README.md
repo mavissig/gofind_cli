@@ -39,7 +39,7 @@ Author : [Egor Kondratov(mavissig)](https://github.com/mavissig)
 
 ### Find
 
-```bash
+```
 gofind [-f [-ext 'ext'] | -d | -sl] path
 ```
 
@@ -49,7 +49,7 @@ gofind [-f [-ext 'ext'] | -d | -sl] path
 
 - `-f` рекурсивно обходит вложенные директории и выводит в stdout названия файлов
 
-    ```bash
+    ```
     gofind -f ~/go/testdir/testdata
   
     === output ===
@@ -63,7 +63,7 @@ gofind [-f [-ext 'ext'] | -d | -sl] path
 
     > флаг -ext может использоваться только после флага -f
 
-    ```bash
+    ```
     gofind -f -ext 'go' ~/go/testdir/testdata
     
     === output ===
@@ -73,7 +73,7 @@ gofind [-f [-ext 'ext'] | -d | -sl] path
 
 - `-d` рекурсивно обходит вложенные директории и выводит в stdout названия директорий
     
-    ```bash
+    ```
     gofind -d ~/go/testdir/testdata
     
     === output ===
