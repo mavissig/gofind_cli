@@ -7,7 +7,6 @@ import (
 	"path"
 )
 
-// Find - returns a list of files and directories in a given directory
 type Find struct {
 	flags
 }
@@ -43,11 +42,6 @@ func (f *Find) output(templatePath string) {
 		return
 	}
 
-	tmpPath := ""
-	if templatePath != "." {
-		tmpPath = templatePath
-	}
-
 	if f.d {
 		fmt.Println(templatePath)
 	}
@@ -74,13 +68,12 @@ func (f *Find) output(templatePath string) {
 			f.output(prefix + file.Name())
 		}
 
-		if f.sl && !f.f {
-			check, pathLink := isSymlink(tmpPath + file.Name())
-			if check {
-				fmt.Printf("%s -> %s\n", file.Name(), pathLink)
-				continue
-			}
+		check, pathLink := isSymlink(templatePath + file.Name())
+		if f.sl && check {
+			fmt.Printf("%s -> %s\n", templatePath+file.Name(), pathLink)
+			continue
 		}
+
 	}
 }
 
